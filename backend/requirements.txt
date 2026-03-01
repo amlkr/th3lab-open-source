@@ -1,0 +1,47 @@
+# ─── Web framework ────────────────────────────────────────────────────────────
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.12
+
+# ─── Database ─────────────────────────────────────────────────────────────────
+sqlalchemy[asyncio]==2.0.35
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+
+# ─── Task queue ───────────────────────────────────────────────────────────────
+celery[redis]==5.4.0
+redis==5.1.0
+
+# ─── AI / ML — CLIP + EfficientNet ───────────────────────────────────────────
+torch==2.4.1
+open_clip_torch==2.26.1
+timm==1.0.9
+numpy==1.26.4
+Pillow==10.4.0
+
+# ─── Video analysis ───────────────────────────────────────────────────────────
+opencv-python-headless==4.10.0.84
+scenedetect[opencv]==0.6.4
+
+# ─── Ollama (Qwen2.5-VL + Qwen2.5:14b) ───────────────────────────────────────
+ollama==0.3.3
+
+# ─── RAG — ChromaDB + document parsing ───────────────────────────────────────
+chromadb==0.5.15
+sentence-transformers==3.1.1
+pypdf==4.3.1
+ebooklib==0.18
+beautifulsoup4==4.12.3
+lxml==5.3.0
+python-docx==1.1.2
+
+# ─── Storage — Cloudflare R2 via S3-compatible API ───────────────────────────
+boto3==1.35.23
+botocore==1.35.23
+
+# ─── Config & utilities ───────────────────────────────────────────────────────
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-dotenv==1.0.1
+aiofiles==24.1.0
+httpx==0.27.2
