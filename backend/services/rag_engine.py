@@ -130,11 +130,15 @@ class RAGEngine:
 
     def __init__(self):
         import chromadb
+        from chromadb.config import Settings
         from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
         logger.info(f"RAGEngine initializing, chroma path: {CHROMA_PATH}")
         os.makedirs(CHROMA_PATH, exist_ok=True)
-        self.client = chromadb.PersistentClient(path=CHROMA_PATH)
+        self.client = chromadb.PersistentClient(
+            path=CHROMA_PATH,
+            settings=Settings(anonymized_telemetry=False),
+        )
         self.embedding_fn = SentenceTransformerEmbeddingFunction(model_name=EMBED_MODEL)
         logger.info("RAGEngine ready.")
 

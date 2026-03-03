@@ -66,9 +66,15 @@ sleep 1
 
 # ─── 7. OpenClaw gateway ──────────────────────────────────────────────────────
 open_tab "OpenClaw" \
-  "cd $DASHBOARD_DIR && OLLAMA_API_KEY='ollama-local' openclaw gateway"
+  "cd $DASHBOARD_DIR && env -u CLAUDECODE OLLAMA_API_KEY='ollama-local' openclaw gateway"
 
-# ─── 8. Open browser ──────────────────────────────────────────────────────────
+sleep 1
+
+# ─── 8. ngrok tunnel ──────────────────────────────────────────────────────────
+open_tab "ngrok" \
+  "ngrok http 5173"
+
+# ─── 9. Open browser ──────────────────────────────────────────────────────────
 echo "Waiting for frontend to be ready..."
 until curl -s http://localhost:5173 > /dev/null 2>&1; do
   sleep 2
@@ -76,3 +82,4 @@ done
 open http://localhost:5173
 
 echo "All services started."
+echo "ngrok dashboard: http://localhost:4040"

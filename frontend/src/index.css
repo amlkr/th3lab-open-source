@@ -1,0 +1,99 @@
+/* ─── CSS Variables ─────────────────────────────── */
+:root {
+  /* Background layers */
+  --bg-0: #080808;
+  --bg-1: #0c0c0c;
+  --bg-2: #111111;
+  --bg-3: #161616;
+  --bg-4: #1a1a1a;
+
+  /* Borders */
+  --border: #1a1a1a;
+  --border-hi: #222222;
+
+  /* Violet accent */
+  --violet:      #8b5cf6;
+  --violet-hi:   #a78bfa;
+  --violet-soft: #c4b5fd;
+  --violet-dim:  #6d28d9;
+  --violet-mute: rgba(139, 92, 246, 0.1);
+
+  /* World accents */
+  --world-amniotic:  #8b5cf6;
+  --world-cine:      #a8b5c0;
+  --world-cuerpo:    #c4a882;
+
+  /* Text */
+  --text-0: #ffffff;
+  --text-1: #999999;
+  --text-2: #666666;
+  --text-3: #333333;
+  --text-4: #1e1e1e;
+
+  /* Status */
+  --green:  #22c55e;
+  --amber:  #f59e0b;
+  --red:    #ef4444;
+
+  /* Typography */
+  --font-sans: 'Syne', system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'JetBrains Mono', monospace;
+
+  /* Sizing */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.7);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Reset ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--text-0);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ─── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* ─── Selection ──────────────────────────────────── */
+::selection {
+  background: rgba(139, 92, 246, 0.25);
+  color: var(--violet-soft);
+}

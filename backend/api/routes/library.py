@@ -415,6 +415,75 @@ async def list_worlds_early():
     return {"worlds": get_worlds_engine().list_worlds()}
 
 
+@library_router.post("/worlds/{world_id}/ingest")
+async def ingest_world_document(
+    world_id: str,
+    file: UploadFile = File(...),
+    project_id: str = Form("_admin"),
+):
+    """
+    POST /api/library/worlds/{world_id}/ingest — upload and ingest a text into a world collection.
+
+    The file is stored temporarily, ingested into ChromaDB world_{world_id},
+    then deleted. Returns chunk count.
+    """
+    from services.worlds_engine import WORLDS
+    if world_id not in WORLDS:
+        raise HTTPException(404, f"World '{world_id}' not found. Valid: {list(WORLDS.keys())}")
+
+    ext = os.path.splitext(file.filename or "")[1].lower()
+    if ext not in (".pdf", ".txt", ".md", ".epub", ".docx"):
+        raise HTTPException(400, "Supported formats: pdf, txt, md, epub, docx")
+
+    tmp_path = os.path.join(UPLOAD_DIR, f"world_{world_id}_{uuid.uuid4()}{ext}")
+    try:
+        content = await file.read()
+        with open(tmp_path, "wb") as f:
+            f.write(content)
+
+        rag = get_rag_engine()
+        doc_id = os.path.splitext(file.filename or "doc")[0]
+        chunk_ids = rag.ingest_document(
+            file_path=tmp_path,
+            project_id=project_id,
+            world_id=world_id,
+            doc_id=doc_id,
+        )
+        return {
+            "world_id":   world_id,
+            "filename":   file.filename,
+            "chunks":     len(chunk_ids),
+            "status":     "ingested",
+        }
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+
+@library_router.get("/worlds/{world_id}/documents")
+async def list_world_documents(world_id: str):
+    """GET /api/library/worlds/{world_id}/documents — list documents ingested into a world."""
+    from services.worlds_engine import WORLDS
+    if world_id not in WORLDS:
+        raise HTTPException(404, f"World '{world_id}' not found.")
+    rag = get_rag_engine()
+    try:
+        col = rag._get_or_create_named_collection(rag._world_collection_name(world_id))
+        count = col.count()
+        result = col.get(include=["metadatas"]) if count > 0 else {"metadatas": []}
+        sources: dict[str, int] = {}
+        for meta in result["metadatas"]:
+            src = meta.get("source", "unknown")
+            sources[src] = sources.get(src, 0) + 1
+        return {
+            "world_id":   world_id,
+            "total_chunks": count,
+            "documents":  [{"source": s, "chunks": n} for s, n in sources.items()],
+        }
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @library_router.get("/{item_id}")
 async def get_library_item(item_id: str, db: AsyncSession = Depends(get_db)):
     """GET /api/library/{item_id}."""

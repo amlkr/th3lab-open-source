@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS library_items (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name                VARCHAR(255) NOT NULL,
-    file_type           VARCHAR(50)  NOT NULL CHECK (file_type IN ('image', 'pdf', 'epub')),
+    file_type           VARCHAR(50)  NOT NULL CHECK (file_type IN ('image', 'pdf', 'epub', 'txt', 'md', 'docx')),
     file_url            TEXT         NOT NULL,
     file_size_bytes     BIGINT,
     chroma_collection   VARCHAR(255),       -- ChromaDB collection name
