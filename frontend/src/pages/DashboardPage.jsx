@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE = ''
+import { API_BASE } from '../config/api'
 
 const WORLD_COLORS = {
   amniotic:        '#8b5cf6',

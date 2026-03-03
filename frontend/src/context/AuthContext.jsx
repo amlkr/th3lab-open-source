@@ -1,9 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { API_BASE } from '../config/api'
 
 const AuthContext = createContext(null)
-
-const API_BASE = ''
 const TOKEN_KEY = 'amlkr_token'
 
 function decodeJwtPayload(token) {

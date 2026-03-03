@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE = ''
+import { API_BASE } from '../config/api'
 
 const WORLDS = [
   { id: 'amniotic',       label: 'amniotic',        color: '#8b5cf6' },

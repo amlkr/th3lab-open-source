@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import ScaleBadge from '../components/ScaleBadge'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE = ''
+import { API_BASE } from '../config/api'
 
 function formatDuration(sec) {
   if (!sec) return '0s'

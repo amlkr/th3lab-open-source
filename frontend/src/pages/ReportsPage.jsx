@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE = ''
+import { API_BASE } from '../config/api'
 
 function CoherenceRing({ score }) {
   const r   = 22

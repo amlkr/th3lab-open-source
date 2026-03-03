@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import ScaleBadge from '../components/ScaleBadge'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE = ''
+import { API_BASE } from '../config/api'
 
 function uploadUrl(localPath) {
   if (!localPath) return null

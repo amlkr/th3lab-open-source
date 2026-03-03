@@ -5,7 +5,7 @@ import AnalysisBar from '../components/AnalysisBar'
 import ChatPanel from '../components/ChatPanel'
 import { useAuth } from '../context/AuthContext'
 
-const API_BASE = ''
+import { API_BASE } from '../config/api'
 
 function uploadUrl(localPath) {
   if (!localPath) return null
