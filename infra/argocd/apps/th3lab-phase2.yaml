@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: th3lab-phase2
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/amlkr/th3lab-open-source.git
+    targetRevision: main
+    path: infra/k8s/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: th3lab
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

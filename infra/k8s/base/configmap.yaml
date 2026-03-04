@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: th3lab-config
+data:
+  DATABASE_URL: postgresql+asyncpg://amlkr:amlkr_secret@postgres:5432/amlkr_db
+  REDIS_URL: redis://redis:6379/0
+  OLLAMA_BASE_URL: http://host.docker.internal:11434
+  CHROMA_PATH: /app/chroma_data
+  UPLOAD_DIR: /app/tmp
+  MCP_BACKEND_URL: http://backend:8000

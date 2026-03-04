@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery
+  template:
+    metadata:
+      labels:
+        app: celery
+    spec:
+      containers:
+        - name: celery
+          image: ghcr.io/amlkr/th3lab-backend:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - celery
+            - -A
+            - core.celery_app
+            - worker
+            - --loglevel=info
+            - --concurrency=2
+            - -Q
+            - video,images,reports,rag
+          envFrom:
+            - configMapRef:
+                name: th3lab-config

@@ -1,0 +1,102 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: th3lab_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: th3lab_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: th3lab_backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      CHROMA_PATH: ${CHROMA_PATH}
+      UPLOAD_DIR: ${UPLOAD_DIR}
+    volumes:
+      - ../../backend:/app
+      - upload_tmp:/app/tmp
+      - chroma_data:/app/chroma_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  celery_worker:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: th3lab_celery
+    command: celery -A core.celery_app worker --loglevel=info --concurrency=2 -Q video,images,reports,rag
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      CHROMA_PATH: ${CHROMA_PATH}
+      UPLOAD_DIR: ${UPLOAD_DIR}
+    volumes:
+      - ../../backend:/app
+      - upload_tmp:/app/tmp
+      - chroma_data:/app/chroma_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mcp:
+    build:
+      context: ../mcp
+      dockerfile: Dockerfile
+    container_name: th3lab_mcp
+    environment:
+      MCP_BACKEND_URL: ${MCP_BACKEND_URL}
+      MCP_PROJECT_ROOT: ${MCP_PROJECT_ROOT}
+    ports:
+      - "${MCP_PORT}:8090"
+    volumes:
+      - ../../:/workspace
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
+  upload_tmp:
+  chroma_data:
