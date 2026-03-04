@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
+  const privateLoginEnabled = process.env.ENABLE_PRIVATE_LOGIN === "true";
+  if (!privateLoginEnabled) {
+    return NextResponse.next();
+  }
+
   const pathname = request.nextUrl.pathname;
 
   const isPublicPath =

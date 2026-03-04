@@ -7,6 +7,7 @@ Este stack levanta:
 - Backend FastAPI
 - Celery worker
 - MCP bridge
+- n8n (integraciones: Gmail, Notion, etc.)
 
 ## 1) Preparar variables
 
@@ -27,6 +28,7 @@ docker compose -f infra/swarm/docker-compose.phase2.yml --env-file infra/swarm/.
 ```bash
 curl http://localhost:8000/health
 curl http://localhost:8090/health
+curl http://localhost:5678/healthz
 ```
 
 ## 4) Operación creativa (sin programar)
@@ -40,3 +42,8 @@ Usa `think.sh` desde raíz:
 ./think.sh agent "Dame un manifiesto visual en 5 principios para este proyecto"
 ```
 
+Panel n8n:
+
+```bash
+open http://localhost:5678
+```

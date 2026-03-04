@@ -34,8 +34,8 @@ export default function RegisterPage() {
       </Link>
 
       <div className="auth-card">
-        <h2 className="auth-title">Crear cuenta</h2>
-        <p className="auth-subtitle">Unite a VISUAL CULT</p>
+        <h2 className="auth-title">TH3LAB PRIVATE ACCESS</h2>
+        <p className="auth-subtitle">register</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-field">

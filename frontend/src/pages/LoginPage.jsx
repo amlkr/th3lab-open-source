@@ -33,8 +33,8 @@ export default function LoginPage() {
       </Link>
 
       <div className="auth-card">
-        <h2 className="auth-title">Iniciar sesión</h2>
-        <p className="auth-subtitle">Accedé a tu espacio cinematográfico</p>
+        <h2 className="auth-title">TH3LAB PRIVATE ACCESS</h2>
+        <p className="auth-subtitle">secure</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-field">

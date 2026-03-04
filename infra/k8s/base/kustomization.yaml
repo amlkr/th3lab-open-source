@@ -9,3 +9,4 @@ resources:
   - backend.yaml
   - celery.yaml
   - mcp.yaml
+  - n8n.yaml

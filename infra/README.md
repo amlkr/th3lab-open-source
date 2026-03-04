@@ -8,6 +8,7 @@ estable, manteniendo intacto el diseño actual de th3lab en frontend.
 - `swarm/`: stack local de servicios para operación continua.
 - `mcp/`: servidor MCP-bridge para ingestar teoría y consultar mundos/proyectos.
 - `argocd/`: manifiestos base para GitOps en Kubernetes (siguiente etapa de deploy).
+- `n8n`: orquestación de integraciones (Gmail, Notion, webhooks, automatizaciones).
 
 ## Principio de diseño
 
@@ -27,6 +28,6 @@ Health checks clave:
 ```bash
 curl http://localhost:8000/health
 curl http://localhost:8090/health
+curl http://localhost:5678/healthz
 openclaw gateway status
 ```
-
