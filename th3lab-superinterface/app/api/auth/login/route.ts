@@ -7,16 +7,18 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as { username?: string; password?: string };
     const username = (body.username || "").trim();
-    const password = body.password || "";
+    const password = (body.password || "").trim();
+    const expectedUser = (USER || "").trim();
+    const expectedPass = (PASS || "").trim();
 
-    if (!USER || !PASS) {
+    if (!expectedUser || !expectedPass) {
       return NextResponse.json(
         { error: "Missing BASIC_AUTH_USER/BASIC_AUTH_PASS env vars" },
         { status: 500 }
       );
     }
 
-    if (username !== USER || password !== PASS) {
+    if (username !== expectedUser || password !== expectedPass) {
       return NextResponse.json({ error: "Credenciales invalidas" }, { status: 401 });
     }
 
