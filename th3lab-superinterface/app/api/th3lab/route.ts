@@ -9,6 +9,12 @@ interface BridgeBody {
   messages?: IncomingMessage[];
   message?: string;
   input?: string;
+  attachments?: Array<{
+    name: string;
+    kind?: string;
+    type?: string;
+    note?: string;
+  }>;
 }
 
 const MCP_URL = process.env.TH3LAB_MCP_URL ?? "http://localhost:3000/mcp";
@@ -44,6 +50,23 @@ function extractUserText(body: BridgeBody): string {
     .find((msg) => msg.role === "user" && typeof msg.content === "string" && msg.content.trim());
 
   return latestUserMessage?.content?.trim() ?? "";
+}
+
+function buildAttachmentContext(body: BridgeBody): string {
+  const attachments = Array.isArray(body.attachments) ? body.attachments : [];
+  if (!attachments.length) return "";
+
+  const lines = attachments.map((a, idx) => {
+    const kind = a.kind || "archivo";
+    const mime = a.type || "unknown";
+    const note = a.note?.trim() ? ` | nota: ${a.note.trim()}` : "";
+    return `${idx + 1}. ${a.name} (${kind}, ${mime})${note}`;
+  });
+
+  return [
+    "Material de referencia de la sesion (usar en el analisis):",
+    ...lines
+  ].join("\n");
 }
 
 function extractToolText(result: unknown): string {
@@ -160,7 +183,11 @@ async function tryTh3labAsk(message: string): Promise<string> {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as BridgeBody;
-    const userText = extractUserText(body);
+    const rawUserText = extractUserText(body);
+    const attachmentContext = buildAttachmentContext(body);
+    const userText = attachmentContext
+      ? `${rawUserText}\n\n${attachmentContext}`
+      : rawUserText;
 
     if (!userText) {
       return NextResponse.json({ error: "Missing user message" }, { status: 400 });
