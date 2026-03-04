@@ -49,6 +49,23 @@ export function AuthProvider({ children }) {
     return data.user
   }
 
+  const loginWithGoogle = async (idToken) => {
+    const res = await fetch(`${API_BASE}/api/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_token: idToken }),
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.detail ?? 'Google login failed')
+    }
+    const data = await res.json()
+    localStorage.setItem(TOKEN_KEY, data.token)
+    setToken(data.token)
+    setUser(data.user)
+    return data.user
+  }
+
   const register = async (name, email, password) => {
     const res = await fetch(`${API_BASE}/api/auth/register`, {
       method:  'POST',
@@ -73,7 +90,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, loginWithGoogle, register, logout }}>
       {children}
     </AuthContext.Provider>
   )

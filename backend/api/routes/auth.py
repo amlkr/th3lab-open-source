@@ -17,6 +17,13 @@ try:
 except ImportError:
     _crypto_available = False
 
+try:
+    from google.oauth2 import id_token as google_id_token
+    from google.auth.transport import requests as google_requests
+    _google_available = True
+except ImportError:
+    _google_available = False
+
 
 def _hash_password(password: str) -> str:
     return _bcrypt.hashpw(password.encode(), _bcrypt.gensalt()).decode()
@@ -52,6 +59,10 @@ class UserOut(BaseModel):
 class AuthResponse(BaseModel):
     token: str
     user:  UserOut
+
+
+class GoogleLoginBody(BaseModel):
+    id_token: str
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -109,4 +120,62 @@ async def login(body: LoginBody, db: AsyncSession = Depends(get_db)):
     return AuthResponse(
         token = token,
         user  = UserOut(id=str(user.id), name=user.name, email=user.email, role=user.role),
+    )
+
+
+@router.post("/google", response_model=AuthResponse)
+async def login_google(body: GoogleLoginBody, db: AsyncSession = Depends(get_db)):
+    if not _google_available:
+        raise HTTPException(status_code=503, detail="Google auth dependencies not installed")
+
+    google_client_id = os.getenv("GOOGLE_CLIENT_ID")
+    if not google_client_id:
+        raise HTTPException(status_code=503, detail="GOOGLE_CLIENT_ID not configured")
+    try:
+        request = google_requests.Request()
+        payload = google_id_token.verify_oauth2_token(
+            body.id_token,
+            request,
+            google_client_id,
+        )
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid Google token")
+
+    email = payload.get("email")
+    email_verified = payload.get("email_verified", False)
+    if not email or not email_verified:
+        raise HTTPException(status_code=401, detail="Google account email not verified")
+
+    name = payload.get("name") or email.split("@")[0]
+    picture = payload.get("picture")
+
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        user = User(
+            id=uuid.uuid4(),
+            name=name,
+            email=email,
+            password_hash=None,
+            role="student",
+            avatar_url=picture,
+        )
+        db.add(user)
+        await db.flush()
+    else:
+        dirty = False
+        if name and user.name != name:
+            user.name = name
+            dirty = True
+        if picture and user.avatar_url != picture:
+            user.avatar_url = picture
+            dirty = True
+        if dirty:
+            await db.flush()
+
+    token = create_token(str(user.id), user.email or email, user.role)
+    return AuthResponse(
+        token=token,
+        user=UserOut(id=str(user.id), name=user.name, email=user.email, role=user.role),
     )

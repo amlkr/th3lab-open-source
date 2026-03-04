@@ -4018,6 +4018,28 @@
   color: #fff;
 }
 
+.auth-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.auth-divider span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.auth-google-wrap {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
 /* ─── Dashboard stats strip ─────────────────────────────── */
 .dashboard-stats-strip {
   display: flex;
